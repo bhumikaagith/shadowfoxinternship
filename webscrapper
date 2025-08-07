@@ -1,0 +1,24 @@
+# 💻 Project: Web Scraper with BeautifulSoup
+# 📝 Task: Allow user to enter a website URL and scrape all h1, h2, and h3 headings
+
+import requests
+from bs4 import BeautifulSoup
+
+url = input("Enter the URL of the website to scrape (include http/https): ")
+
+try:
+  
+    response = requests.get(url)
+    response.raise_for_status() 
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    print("\n--- Extracted Headings ---\n")
+    for heading_tag in ['h1', 'h2', 'h3']:
+        headings = soup.find_all(heading_tag)
+        for idx, h in enumerate(headings, start=1):
+            print(f"{heading_tag.upper()} {idx}: {h.get_text(strip=True)}")
+
+except requests.exceptions.RequestException as e:
+    print("\nError: Failed to retrieve the website.")
+    print("Reason:", e)

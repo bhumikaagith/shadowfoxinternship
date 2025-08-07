@@ -1,0 +1,133 @@
+# 💻 Project: Hangman – Implement the classic word-guessing game with visual progress and hints
+
+import random
+
+class HangmanGame:
+    def __init__(self):
+        self.words = [
+            ("python", "A programming language"),
+            ("computer", "Electronic device for processing data"),
+            ("guitar", "Musical instrument with strings"),
+            ("elephant", "Large mammal with a trunk"),
+            ("rainbow", "Colorful arc in the sky"),
+            ("ocean", "Large body of salt water"),
+            ("mountain", "Large natural elevation"),
+            ("butterfly", "Insect with colorful wings"),
+            ("telescope", "Instrument for viewing distant objects"),
+            ("chocolate", "Sweet confection")
+        ]
+
+        self.hangman_stages = [
+            """
+               -----
+               |   |
+               |   
+               |   
+               |   
+               |   
+            -------""",
+            """
+               -----
+               |   |
+               |   O
+               |   
+               |   
+               |   
+            -------""",
+            """
+               -----
+               |   |
+               |   O
+               |   |
+               |   
+               |   
+            -------""",
+            """
+               -----
+               |   |
+               |   O
+               |  /|
+               |   
+               |   
+            -------""",
+            """
+               -----
+               |   |
+               |   O
+               |  /|\\
+               |   
+               |   
+            -------""",
+            """
+               -----
+               |   |
+               |   O
+               |  /|\\
+               |  / 
+               |   
+            -------""",
+            """
+               -----
+               |   |
+               |   O
+               |  /|\\
+               |  / \\
+               |   
+            -------"""
+        ]
+
+        self.reset_game()
+
+    def reset_game(self):
+        self.word, self.hint = random.choice(self.words)
+        self.guessed_letters = set()
+        self.wrong_guesses = 0
+        self.max_wrong_guesses = len(self.hangman_stages) - 1
+        self.game_over = False
+        self.won = False
+
+    def display_game_state(self):
+        print(self.hangman_stages[self.wrong_guesses])
+        display_word = " ".join([letter if letter in self.guessed_letters else "_" for letter in self.word])
+        print(f"\nWord: {display_word}")
+        print(f"Hint: {self.hint}")
+        print(f"Wrong guesses left: {self.max_wrong_guesses - self.wrong_guesses}")
+        print(f"Guessed letters: {' '.join(sorted(self.guessed_letters))}")
+
+    def guess_letter(self, letter):
+        if letter in self.guessed_letters:
+            print("You already guessed that letter.")
+            return
+        self.guessed_letters.add(letter)
+
+        if letter in self.word:
+            print("Good guess!")
+        else:
+            print("Wrong guess.")
+            self.wrong_guesses += 1
+
+        if all(letter in self.guessed_letters for letter in self.word):
+            self.won = True
+            self.game_over = True
+        elif self.wrong_guesses >= self.max_wrong_guesses:
+            self.game_over = True
+
+    def play(self):
+        print("🎮 Welcome to Hangman!")
+        while not self.game_over:
+            self.display_game_state()
+            guess = input("Enter a letter: ").lower()
+            if not guess.isalpha() or len(guess) != 1:
+                print("Please enter a single alphabetic character.")
+                continue
+            self.guess_letter(guess)
+
+        self.display_game_state()
+        if self.won:
+            print("🎉 Congratulations! You guessed the word!")
+        else:
+            print(f"😢 Game over. The word was: {self.word}")
+
+if __name__ == "__main__":
+    game = HangmanGame()
+    game.play()
